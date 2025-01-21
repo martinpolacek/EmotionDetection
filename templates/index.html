@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webcam Stream</title>
+</head>
+<body>
+  <h1>Webcam Stream</h1>
+  <video id="video" width="640" height="480" autoplay></video>
+  <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+  <img id="processedImage" width="640" height="480" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const processedImage = document.getElementById('processedImage');
+    const socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    // Získání přístupu k webkameře
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+
+        // Odesílání snímků z videa do socketu
+        setInterval(() => {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = canvas.toDataURL('image/jpeg', 0.7);
+          socket.emit('image', imageData);
+        }, 50); // Odesílá snímky každých 50ms (FPS = 20)
+      })
+      .catch(err => {
+        console.error("Chyba při přístupu k webkameře:", err);
+      });
+
+    // Příjem zpracovaného snímku ze socketu
+    socket.on('processed_image', (data) => {
+      console.log("NEW_IMAGE_HERE")
+      processedImage.src = data;
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+</body>
+</html>
