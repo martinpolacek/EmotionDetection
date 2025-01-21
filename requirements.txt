@@ -1,0 +1,9 @@
+flask
+flask_socketio
+numpy
+base64
+io
+facenet_pytorch
+PIL
+transformers
+torch
