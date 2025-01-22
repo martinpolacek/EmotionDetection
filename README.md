@@ -2,7 +2,7 @@
 
 Instalace knihoven
 
-    pip install requirements
+    pip install -r requirements.txt
 
 OpenCV conda
 
