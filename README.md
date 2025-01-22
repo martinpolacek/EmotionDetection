@@ -1,5 +1,9 @@
 # EmotionDetection
 
+Conda
+
+    conda create -n torch-env python=3.10
+
 Instalace knihoven
 
     pip install -r requirements.txt
