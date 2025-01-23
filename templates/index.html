@@ -2,19 +2,68 @@
 <html>
 <head>
   <title>Webcam Stream</title>
+
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+  <style>
+    @font-face {
+    font-family: 'TULMono';
+    src: url('./TULMono-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    }
+    body {
+      background-color: #f07c00;
+    }
+    .container {
+      display: block;
+      width: 80%;
+      margin: auto;
+      height: 95vh; /* Nebo jiná pevná výška */
+      overflow: hidden;
+      position: relative;
+      border: 10px solid #d67104; /* Okraj o tloušťce 10px, barva zelená */
+      border-radius: 100px; /* Zaoblení rohů s poloměrem 50px */
+    }
+    .container img {
+      width: 100%;
+      height: 100%;
+    }
+    .popisek {
+      border: 10px solid #d67104; /* Okraj o tloušťce 10px, barva zelená */
+      border-radius: 10px;
+      width: 20%;
+      height: 75px;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #f07c00;
+      font-family: "TULMono", sans-serif;
+      font-size: 2.4rem;
+      color: white;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <h1>Webcam Stream</h1>
-  <video id="video" width="640" height="480" autoplay></video>
+  <!--<h1>Webcam Stream</h1>-->
+  <video id="video" width="640" height="480" style="display: none;" autoplay></video>
   <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
-  <img id="processedImage" width="640" height="480" />
+   <div class="container">
+    <img id="processedImage" src="https://media.wired.com/photos/65e83cc9b8ffa5f8fa84c893/4:3/w_2664,h_1998,c_limit/wired-uk-google-watching.jpg"/>
+  </div>  
+  <div class="popisek">
+    DOD 2025
+  </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const processedImage = document.getElementById('processedImage');
-    const socket = io.connect('http://' + document.domain + ':' + location.port);
+    const socket = io.connect('http://' + "orion.ite.tul.cz" + ':' + "5000");
 
     // Získání přístupu k webkameře
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -27,7 +76,7 @@
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           const imageData = canvas.toDataURL('image/jpeg', 0.7);
           socket.emit('image', imageData);
-        }, 50); // Odesílá snímky každých 50ms (FPS = 20)
+        }, 200); // Odesílá snímky každých 50ms (FPS = 20)
       })
       .catch(err => {
         console.error("Chyba při přístupu k webkameře:", err);
